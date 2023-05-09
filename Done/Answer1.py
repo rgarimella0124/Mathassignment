@@ -2,6 +2,7 @@ import numpy as np
 import time
 from tqdm import tqdm
 from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
 
 
 # Define the cost function
@@ -51,9 +52,6 @@ def stochastic_gradient_descent(X, y, theta, alpha, num_iters):
 def batch_stochastic_gradient_descent(X, y, theta, alpha, num_iters, batch_size):
     m = len(y)
     J_history = np.zeros(num_iters)
-    # print(
-    #     "====================Running Batch Stochastic Gradient Descent======================="
-    # )
     for i in tqdm(range(num_iters), desc="Batch Stochastic Gradient Descent"):
         rand_indices = np.random.randint(0, m, size=batch_size)
         X_b = X[rand_indices, :]
@@ -112,3 +110,15 @@ print("Theta: ", theta_bsgd.ravel()[:5], "...")
 print("Cost: ", J_history_bsgd[-1])
 print("Running time: ", end_time - start_time, "seconds")
 print("Accuracy is: ", accuracy_bsgd)
+
+
+# Plot the cost function value over iterations
+plt.figure(figsize=(10, 8))
+plt.plot(range(num_iters), J_history_vgd, label="Vanilla Gradient Descent")
+plt.plot(range(num_iters), J_history_sgd, label="Stochastic Gradient Descent")
+plt.plot(range(num_iters), J_history_bsgd, label="Batch Stochastic Gradient Descent")
+plt.xlabel("Iteration")
+plt.ylabel("Cost")
+plt.title("Cost Function Value over Iterations")
+plt.legend()
+plt.show()

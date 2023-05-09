@@ -1,8 +1,10 @@
 import numpy as np
 import time
 from keras.optimizers import Adam, RMSprop, Adagrad
+from tqdm import tqdm
 from keras.models import Sequential
 from keras.layers import Dense
+import matplotlib.pyplot as plt
 
 
 # Optimizing the Vanilla Gradient Descent function
@@ -14,10 +16,13 @@ def adam_vanilla_gradient_descent(X, y, theta, alpha, num_iters):
         loss="binary_crossentropy", optimizer=optimizer, metrics=["binary_accuracy"]
     )
     start_time = time.time()
-    history = model.fit(X, y, epochs=num_iters, batch_size=64, verbose=0)
+    J_history = []
+    accuracy = []
+    for epoch in tqdm(range(num_iters), desc="Adam Vanilla Gradient Descent"):
+        history = model.fit(X, y, epochs=1, batch_size=64, verbose=0)
+        J_history.append(history.history["loss"][0])
+        accuracy.append(history.history["binary_accuracy"][0])
     end_time = time.time()
-    J_history = history.history["loss"]
-    accuracy = history.history["binary_accuracy"]
     return model.get_weights()[0], J_history, accuracy, end_time - start_time
 
 
@@ -29,10 +34,13 @@ def rmsprop_vanilla_gradient_descent(X, y, theta, alpha, num_iters):
         loss="binary_crossentropy", optimizer=optimizer, metrics=["binary_accuracy"]
     )
     start_time = time.time()
-    history = model.fit(X, y, epochs=num_iters, batch_size=64, verbose=0)
+    J_history = []
+    accuracy = []
+    for epoch in tqdm(range(num_iters), desc="RMSprop Vanilla Gradient Descent"):
+        history = model.fit(X, y, epochs=1, batch_size=64, verbose=0)
+        J_history.append(history.history["loss"][0])
+        accuracy.append(history.history["binary_accuracy"][0])
     end_time = time.time()
-    J_history = history.history["loss"]
-    accuracy = history.history["binary_accuracy"]
     return model.get_weights()[0], J_history, accuracy, end_time - start_time
 
 
@@ -44,10 +52,13 @@ def adagrad_vanilla_gradient_descent(X, y, theta, alpha, num_iters):
         loss="binary_crossentropy", optimizer=optimizer, metrics=["binary_accuracy"]
     )
     start_time = time.time()
-    history = model.fit(X, y, epochs=num_iters, batch_size=64, verbose=0)
+    J_history = []
+    accuracy = []
+    for epoch in tqdm(range(num_iters), desc="AdaGrad Vanilla Gradient Descent"):
+        history = model.fit(X, y, epochs=1, batch_size=64, verbose=0)
+        J_history.append(history.history["loss"][0])
+        accuracy.append(history.history["binary_accuracy"][0])
     end_time = time.time()
-    J_history = history.history["loss"]
-    accuracy = history.history["binary_accuracy"]
     return model.get_weights()[0], J_history, accuracy, end_time - start_time
 
 
@@ -59,8 +70,8 @@ y = np.random.randint(2, size=(m, 1))
 
 # Set hyperparameters
 theta = np.zeros((n, 1))
-alpha = 0.01
-num_iters = 100
+alpha = 0.1
+num_iters = 1000
 
 # # Run Vanilla Gradient Descent with Adam Optimizer and record running time
 (
@@ -100,3 +111,24 @@ print("Theta: ", theta_ada_grad_vgd.ravel()[:5])
 print("Cost: ", J_history_ada_grad_vgd[-1])
 print("Training accuracy: {:.2f}%".format(ada_grad_accuracy[-1] * 100))
 print("Running time: ", ada_grad_time_taken, "seconds")
+
+
+# Plot the training loss for each optimizer
+plt.plot(range(num_iters), J_history_avgd, label="Adam")
+plt.plot(range(num_iters), J_history_rmsvgd, label="RMSprop")
+plt.plot(range(num_iters), J_history_ada_grad_vgd, label="AdaGrad")
+plt.xlabel("Epoch")
+plt.ylabel("Training Loss")
+plt.title("Training Loss vs. Epoch")
+plt.legend()
+plt.show()
+
+# Plot the training accuracy for each optimizer
+plt.plot(range(num_iters), adam_accuracy, label="Adam")
+plt.plot(range(num_iters), rms_accuracy, label="RMSprop")
+plt.plot(range(num_iters), ada_grad_accuracy, label="AdaGrad")
+plt.xlabel("Epoch")
+plt.ylabel("Training Accuracy")
+plt.title("Training Accuracy vs. Epoch")
+plt.legend()
+plt.show()

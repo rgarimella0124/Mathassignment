@@ -1,6 +1,6 @@
 import numpy as np
 import time
-
+import matplotlib.pyplot as plt
 
 # Generate random data
 m = 50000
@@ -54,7 +54,7 @@ print("sorted eigenvectors:")
 print(sorted_eigenvectors)
 print(f"Time taken for sorting eigenvectors: {sorting_time:.5f} seconds")
 
-# projecting the data onto the new basis
+# Projecting the centered data onto the sorted eigenvectors to obtain the principal components.
 start = time.time()
 
 X_pca = X_centered.dot(sorted_eigenvectors)
@@ -64,3 +64,22 @@ projection_time = time.time() - start
 print("X_pca:")
 print(X_pca)
 print(f"Time taken for projection: {projection_time:.5f} seconds")
+
+
+# Compute the explained variance ratio
+explained_variances = sorted_eigenvalues / np.sum(sorted_eigenvalues)
+cumulative_explained_variances = np.cumsum(explained_variances)
+
+# Plot the explained variance ratio
+plt.plot(range(1, n + 1), explained_variances, "-o", label="Explained variance")
+plt.plot(
+    range(1, n + 1),
+    cumulative_explained_variances,
+    "-s",
+    label="Cumulative explained variance",
+)
+plt.xlabel("Principal component")
+plt.ylabel("Explained variance ratio")
+plt.title("Explained variance ratio of the principal components")
+plt.legend(loc="best")
+plt.show()
