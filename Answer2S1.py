@@ -1,6 +1,7 @@
 import numpy as np
 import time
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 def cost_function(X, y, theta):
@@ -51,7 +52,7 @@ def stochastic_gradient_descent(
 
         if optimizer == "adam":
             beta1 = kwargs.get("beta1", 0.9)
-            beta2 = kwargs.get("beta2", 0.999)
+            beta2 = kwargs.get("beta2", 0.2)
             epsilon = kwargs.get("epsilon", 1e-8)
             m_t = beta1 * m_t + (1 - beta1) * grad
             v_t = beta2 * v_t + (1 - beta2) * (grad**2)
@@ -90,7 +91,7 @@ y = np.random.rand(m, 1) >= 0.5  # generate binary labels
 
 # Set hyperparameters
 theta = np.zeros((n, 1))
-alpha = 0.1
+alpha = 0.01
 num_iters = 1000
 
 
@@ -132,3 +133,15 @@ print("Theta: ", theta_ada_grad.ravel()[:5])
 print("Cost: ", adagrad_loss[-1])
 print("Training accuracy: ", ada_grad_accuracy)
 print("Running time: ", ada_grad_time_taken, "seconds")
+
+
+# Plot the cost function over iterations for each optimizer
+plt.figure(figsize=(12, 8))
+plt.plot(range(num_iters), adam_loss, label="Adam")
+plt.plot(range(num_iters), rmsprop_loss, label="RMSProp")
+plt.plot(range(num_iters), adagrad_loss, label="AdaGrad")
+plt.xlabel("Iterations")
+plt.ylabel("Cost")
+plt.title("Cost function over iterations for Stochastic Gradient Descent")
+plt.legend()
+plt.show()

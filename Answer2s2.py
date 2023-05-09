@@ -1,6 +1,7 @@
 import numpy as np
 import time
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 # Define the cost function
@@ -52,7 +53,7 @@ def batch_stochastic_gradient_descent(
 
         if optimizer == "adam":
             beta1 = kwargs.get("beta1", 0.9)
-            beta2 = kwargs.get("beta2", 0.999)
+            beta2 = kwargs.get("beta2", 0.99)
             epsilon = kwargs.get("epsilon", 1e-8)
             m_t = beta1 * m_t + (1 - beta1) * grad
             v_t = beta2 * v_t + (1 - beta2) * (grad**2)
@@ -90,7 +91,7 @@ y = np.random.rand(m, 1) >= 0.5
 
 # Set hyperparameters
 theta = np.zeros((n, 1))
-alpha = 0.1
+alpha = 0.01
 num_iters = 1000
 
 
@@ -98,12 +99,12 @@ print("Batch Stochastic Gradient Descent")
 
 # # Run Batch Stochastic Gradient Descent with Adam Optimizer and record running time
 (
-    theta,
+    theta_bsgd,
     adam_loss,
     adam_accuracy,
     adam_time_taken,
 ) = batch_stochastic_gradient_descent(X, y, theta, alpha, num_iters, "adam")
-print("Theta: ", theta_avgd.ravel()[:5])
+print("Theta: ", theta_bsgd.ravel()[:5])
 print("Cost: ", adam_loss[-1])
 print("Accuracy: ", adam_accuracy)
 print("Running time: ", adam_time_taken, "seconds")
@@ -111,25 +112,36 @@ print("Running time: ", adam_time_taken, "seconds")
 
 # # Run Batch Stochastic Gradient Descent with rmsprop Optimizer and record running time
 (
-    theta,
-    adam_loss,
-    adam_accuracy,
-    adam_time_taken,
+    theta_rmsprop_bsgd,
+    rmsprop_loss,
+    rms_accuracy,
+    rms_time_taken,
 ) = batch_stochastic_gradient_descent(X, y, theta, alpha, num_iters, "rmsprop")
-print("Theta: ", theta_avgd.ravel()[:5])
-print("Cost: ", adam_loss)
-print("Accuracy: ", adam_accuracy)
-print("Running time: ", adam_time_taken, "seconds")
+print("Theta: ", theta_rmsprop_bsgd.ravel()[:5])
+print("Cost: ", rmsprop_loss[-1])
+print("Training accuracy: ", rms_accuracy)
+print("Running time: ", rms_time_taken, "seconds")
 
 
 # # Run Batch Stochastic Gradient Descent with adagrad Optimizer and record running time
 (
-    theta,
-    adam_loss,
-    adam_accuracy,
-    adam_time_taken,
+    theta_adagrad_bsgd,
+    adagrad_loss,
+    ada_grad_accuracy,
+    ada_grad_time_taken,
 ) = batch_stochastic_gradient_descent(X, y, theta, alpha, num_iters, "adagrad")
-print("Theta: ", theta_avgd.ravel()[:5])
-print("Cost: ", adam_loss)
-print("Accuracy: ", adam_accuracy)
-print("Running time: ", adam_time_taken, "seconds")
+print("Theta: ", theta_adagrad_bsgd.ravel()[:5])
+print("Cost: ", adagrad_loss[-1])
+print("Training accuracy: ", ada_grad_accuracy)
+print("Running time: ", ada_grad_time_taken, "seconds")
+
+# Plot the cost function over iterations for each optimizer
+plt.figure(figsize=(12, 8))
+plt.plot(range(num_iters), adam_loss, label="Adam")
+plt.plot(range(num_iters), rmsprop_loss, label="RMSProp")
+plt.plot(range(num_iters), adagrad_loss, label="AdaGrad")
+plt.xlabel("Iterations")
+plt.ylabel("Cost")
+plt.title("Cost function over iterations for Vanilla Gradient Descent")
+plt.legend()
+plt.show()

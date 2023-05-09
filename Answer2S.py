@@ -1,6 +1,7 @@
 import numpy as np
 import time
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 def cost_function(X, y, theta):
@@ -9,13 +10,11 @@ def cost_function(X, y, theta):
     J = 1 / (2 * m) * np.sum((h - y) ** 2)
     return J
 
-
 def gradient(X, y, theta):
     m = len(y)
     h = X.dot(theta)
     grad = 1 / m * X.T.dot(h - y)
     return grad
-
 
 def accuracy(y_true, y_pred):
     correct_predictions = np.sum(y_true == y_pred)
@@ -93,7 +92,7 @@ print("Vanilla Gradient Descent")
     adam_accuracy,
     adam_time_taken,
 ) = VanillaGradientDescent(X, y, theta, alpha, num_iters, "adam")
-
+print("Vanilla Gradient Descent with Adam Optimizer ")
 print("Theta: ", theta_avgd.ravel()[:5])
 print("Cost: ", J_history_avgd[-1])
 print("Training accuracy: ", adam_accuracy)
@@ -106,6 +105,7 @@ print("Running time: ", adam_time_taken, "seconds")
     rms_accuracy,
     rms_time_taken,
 ) = VanillaGradientDescent(X, y, theta, alpha, num_iters, "rmsprop")
+print("Vanilla Gradient Descent with ")
 print("Theta: ", theta_rmsvgd.ravel()[:5])
 print("Cost: ", J_history_rmsvgd[-1])
 print("Training accuracy: ", rms_accuracy)
@@ -114,11 +114,24 @@ print("Running time: ", rms_time_taken, "seconds")
 # # Run Vanilla Gradient Descent with AdaGrad Optimizer and record running time
 (
     theta_ada_grad_vgd,
-    J_history_ada_grad_vgd,
+    J_history_ada_grad,
     ada_grad_accuracy,
     ada_grad_time_taken,
 ) = VanillaGradientDescent(X, y, theta, alpha, num_iters, "adagrad")
+print("Vanilla Gradient Descent with ")
 print("Theta: ", theta_ada_grad_vgd.ravel()[:5])
-print("Cost: ", J_history_ada_grad_vgd[-1])
+print("Cost: ", J_history_ada_grad[-1])
 print("Training accuracy:", ada_grad_accuracy)
 print("Running time: ", ada_grad_time_taken, "seconds")
+
+
+# Plot the cost function over iterations for each optimizer
+plt.figure(figsize=(12, 8))
+plt.plot(range(num_iters), J_history_avgd, label="Adam")
+plt.plot(range(num_iters), J_history_rmsvgd, label="RMSProp")
+plt.plot(range(num_iters), J_history_ada_grad, label="AdaGrad")
+plt.xlabel("Iterations")
+plt.ylabel("Cost")
+plt.title("Cost function over iterations for Vanilla Gradient Descent")
+plt.legend()
+plt.show()
